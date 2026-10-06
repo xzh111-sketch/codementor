@@ -1,0 +1,27 @@
+spring:
+  # 本地密钥配置：文件存在时自动加载，且不会被提交到仓库
+  config:
+    import: optional:classpath:application-local.yml
+  application:
+    name: ai-code-helper
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+langchain4j:
+  community:
+    dashscope:
+      chat-model:
+        model-name: qwen-max
+        api-key: <Your API Key>
+      streaming-chat-model:
+        model-name: qwen-max
+        api-key: <Your API Key>
+      embedding-model:
+        model-name: text-embedding-v4
+        api-key: <Your API Key>
+bigmodel:
+  api-key: <Your API Key>
+# 面试题检索地址（需要拼接关键词），留空则不启用面试题搜索工具
+interview:
+  search-url: ""
