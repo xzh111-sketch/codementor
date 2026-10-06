@@ -78,7 +78,7 @@ bigmodel:
 ### 2. 启动后端
 
 ```bash
-cd ai-code-helper-master
+cd codementor-backend
 mvn spring-boot:run
 ```
 
@@ -89,7 +89,7 @@ mvn spring-boot:run
 ### 3. 启动前端
 
 ```bash
-cd ai-code-helper-frontend
+cd codementor-frontend
 npm install
 npm run dev
 ```
@@ -118,7 +118,7 @@ data:！有什么可以帮你的吗？
 ## 项目结构
 
 ```
-ai-code-helper-master/
+codementor-backend/
 └── src/main
     ├── java/
     │   ├── ai                  # AI 服务层

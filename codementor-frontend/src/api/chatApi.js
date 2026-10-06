@@ -21,41 +21,59 @@ export function chatWithSSE(memoryId, message, onMessage, onError, onClose) {
     
     // 创建 EventSource 连接
     const eventSource = new EventSource(`${API_BASE_URL}/ai/chat?${params}`)
-    
+
+    // finished：本次请求已经有结论，避免重复回调
+    // receivedData：是否收到过模型输出，用来区分"服务端正常关闭连接"和"压根没连上"
+    let finished = false
+    let receivedData = false
+
+    // 统一收口：无论是正常结束还是出错，都只回调一次，并确保连接被关闭
+    const settle = (isError, error) => {
+        if (finished) {
+            return
+        }
+        finished = true
+        eventSource.close()
+        if (isError) {
+            console.error('SSE 连接错误:', error)
+            onError && onError(error)
+        } else {
+            onClose && onClose()
+        }
+    }
+
     // 处理接收到的消息
     eventSource.onmessage = function(event) {
         try {
             const data = event.data
             if (data && data.trim() !== '') {
+                receivedData = true
                 onMessage(data)
             }
         } catch (error) {
             console.error('解析消息失败:', error)
-            onError && onError(error)
+            settle(true, error)
         }
     }
-    
-    // 处理错误
+
+    // 服务端在流结束时发送的结束标记：主动关闭连接，
+    // 这样浏览器就不会再把"连接关闭"当成错误
+    eventSource.addEventListener('done', function() {
+        settle(false)
+    })
+
+    // 处理错误：只有真正出错时才上报
     eventSource.onerror = function(error) {
-        console.log('SSE 连接状态:', eventSource.readyState)
-        // 只有在连接状态不是正常关闭时才报错
-        if (eventSource.readyState !== EventSource.CLOSED) {
-            console.error('SSE 连接错误:', error)
-            onError && onError(error)
+        if (finished) {
+            return
+        }
+        // 收到过内容说明流已经跑完，只是连接被关闭，按正常结束处理；
+        // 一个字都没收到才是真的失败（比如后端没启动）
+        if (receivedData) {
+            settle(false)
         } else {
-            console.log('SSE 连接正常结束')
+            settle(true, error)
         }
-        
-        // 确保连接关闭
-        if (eventSource.readyState !== EventSource.CLOSED) {
-            eventSource.close()
-        }
-    }
-    
-    // 处理连接关闭
-    eventSource.onclose = function() {
-        console.log('SSE 连接已关闭')
-        onClose && onClose()
     }
     
     return eventSource

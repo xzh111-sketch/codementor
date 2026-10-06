@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.xzh</groupId>
-    <artifactId>ai-code-helper</artifactId>
+    <artifactId>codementor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ai-code-helper</name>
-    <description>ai-code-helper</description>
+    <name>codementor</name>
+    <description>codementor</description>
     <url/>
     <licenses>
         <license/>

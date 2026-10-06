@@ -169,8 +169,10 @@ export default {
     
     handleAiError(error) {
       console.error('AI 回复出错:', error)
-      this.connectionError = true
+      // 先收尾再置错误标记：finishAiResponse 内部会把 connectionError 重置成 false，
+      // 顺序反了的话错误提示根本显示不出来
       this.finishAiResponse()
+      this.connectionError = true
       
       // 5秒后自动隐藏错误提示
       setTimeout(() => {

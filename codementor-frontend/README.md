@@ -24,7 +24,7 @@
 ## 项目结构
 
 ```
-ai-code-helper-frontend/
+codementor-frontend/
 ├── public/                  # 静态资源
 ├── src/
 │   ├── api/                # API 接口
